@@ -112,8 +112,8 @@
                 <div>
                     <h4 class="font-semibold mb-4">Kontak</h4>
                     <ul class="space-y-2 text-stone-200">
-                        <li>Email: hello@copi.com</li>
-                        <li>Telepon: 0812-3456-7890</li>
+                        <li>Email: farnandayoga@gmail.com</li>
+                        <li>Telepon: 0877-7904-9014</li>
                     </ul>
                 </div>
             </div>
