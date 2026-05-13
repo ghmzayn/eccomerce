@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Qios - Toko Online Terpercaya')</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/base.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="font-sans antialiased bg-stone-50 text-stone-800">
     <nav class="bg-white shadow-md sticky top-0 z-40">
@@ -134,6 +135,19 @@
             document.getElementById('mobile-menu').classList.toggle('hidden');
         });
     </script>
+     <!-- Histats.com  START  (aync)-->
+<script type="text/javascript">var _Hasync= _Hasync|| [];
+_Hasync.push(['Histats.start', '1,5026466,4,0,0,0,00010000']);
+_Hasync.push(['Histats.fasi', '1']);
+_Hasync.push(['Histats.track_hits', '']);
+(function() {
+var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+hs.src = ('//s10.histats.com/js15_as.js');
+(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+})();</script>
+<noscript><a href="/" target="_blank"><img  src="//sstatic1.histats.com/0.gif?5026466&101" alt="" border="0"></a></noscript>
+<!-- Histats.com  END  -->
+
     @stack('scripts')
 </body>
 </html>
