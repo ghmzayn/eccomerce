@@ -5,137 +5,114 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductVariant;
+use App\Models\Store;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
     public function index(): View
     {
-        $products = Product::with('category')->latest()->paginate(10);
+        $products = Product::with(['store', 'productVariants'])->withCount('productVariants')->latest()->paginate(10);
 
         return view('admin.products.index', compact('products'));
     }
 
     public function create(): View
     {
+        $stores = Store::all();
         $categories = Category::all();
 
-        return view('admin.products.create', compact('categories'));
+        return view('admin.products.create', compact('stores', 'categories'));
     }
 
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'name' => 'required|max:255|unique:products,name',
-            'description' => 'nullable',
-            'price' => 'required|numeric|min:0',
-            'promo_price' => 'nullable|numeric|min:0|lt:price',
-            'stock' => 'required|integer|min:0',
+            'store_id' => 'required|exists:stores,id',
+            'nama_produk' => 'required|max:255',
+            'kategori' => 'required|max:100',
+            'deskripsi' => 'nullable',
+            'variants' => 'required|array|min:1',
+            'variants.*.nama_varian' => 'required|max:100',
+            'variants.*.harga' => 'required|numeric|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'is_promo' => 'boolean',
+            'variants.*.stok' => 'required|integer|min:0',
         ], [
-            'category_id.required' => 'Kategori wajib dipilih.',
-            'category_id.exists' => 'Kategori tidak valid.',
-            'name.required' => 'Nama produk wajib diisi.',
-            'name.max' => 'Nama produk maksimal 255 karakter.',
-            'name.unique' => 'Nama produk sudah ada.',
-            'price.required' => 'Harga wajib diisi.',
-            'price.numeric' => 'Harga harus berupa angka.',
-            'price.min' => 'Harga minimal 0.',
-            'promo_price.numeric' => 'Harga promo harus berupa angka.',
-            'promo_price.min' => 'Harga promo minimal 0.',
-            'promo_price.lt' => 'Harga promo harus lebih rendah dari harga normal.',
-            'stock.required' => 'Stok wajib diisi.',
-            'stock.integer' => 'Stok harus berupa angka.',
-            'stock.min' => 'Stok minimal 0.',
-            'image.image' => 'File harus berupa gambar.',
-            'image.mimes' => 'Format gambar harus jpeg, png, jpg, atau webp.',
-            'image.max' => 'Ukuran gambar maksimal 2MB.',
+            'store_id.required' => 'Toko wajib dipilih.',
+            'store_id.exists' => 'Toko tidak valid.',
+            'nama_produk.required' => 'Nama produk wajib diisi.',
+            'nama_produk.max' => 'Nama produk maksimal 255 karakter.',
+            'kategori.required' => 'Kategori wajib diisi.',
+            'variants.required' => 'Minimal 1 varian produk.',
+            'variants.*.nama_varian.required' => 'Nama varian wajib diisi.',
+            'variants.*.harga.required' => 'Harga varian wajib diisi.',
+            'variants.*.harga.numeric' => 'Harga harus berupa angka.',
+            'variants.*.stok.required' => 'Stok varian wajib diisi.',
+            'variants.*.stok.integer' => 'Stok harus berupa angka.',
         ]);
 
         $data = [
-            'category_id' => $validated['category_id'],
-            'name' => $validated['name'],
-            'slug' => Str::slug($validated['name']),
-            'description' => $validated['description'] ?? null,
-            'price' => $validated['price'],
-            'stock' => $validated['stock'],
-            'is_promo' => $request->boolean('is_promo'),
+            'store_id' => $validated['store_id'],
+            'nama_produk' => $validated['nama_produk'],
+            'kategori' => $validated['kategori'],
+            'deskripsi' => $validated['deskripsi'] ?? null,
         ];
-
-        if ($request->filled('promo_price')) {
-            $data['promo_price'] = $validated['promo_price'];
-        }
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('products', 'public');
         }
 
-        Product::create($data);
+        $product = Product::create($data);
 
-        return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan.');
+        foreach ($validated['variants'] as $variant) {
+            ProductVariant::create([
+                'product_id' => $product->id,
+                'nama_varian' => $variant['nama_varian'],
+                'harga' => $variant['harga'],
+                'stok' => $variant['stok'],
+            ]);
+        }
+
+        return redirect()->route('admin.products.index')->with('success', 'Produk beserta varian berhasil ditambahkan.');
     }
 
     public function edit(Product $product): View
     {
+        $stores = Store::all();
         $categories = Category::all();
+        $product->load('productVariants');
 
-        return view('admin.products.edit', compact('product', 'categories'));
+        return view('admin.products.edit', compact('product', 'stores', 'categories'));
     }
 
     public function update(Request $request, Product $product): RedirectResponse
     {
         $validated = $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'name' => 'required|max:255|unique:products,name,' . $product->id,
-            'description' => 'nullable',
-            'price' => 'required|numeric|min:0',
-            'promo_price' => 'nullable|numeric|min:0|lt:price',
-            'stock' => 'required|integer|min:0',
+            'store_id' => 'required|exists:stores,id',
+            'nama_produk' => 'required|max:255',
+            'kategori' => 'required|max:100',
+            'deskripsi' => 'nullable',
+            'variants' => 'required|array|min:1',
+            'variants.*.id' => 'nullable|exists:product_variants,id',
+            'variants.*.nama_varian' => 'required|max:100',
+            'variants.*.harga' => 'required|numeric|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'is_promo' => 'boolean',
-        ], [
-            'category_id.required' => 'Kategori wajib dipilih.',
-            'category_id.exists' => 'Kategori tidak valid.',
-            'name.required' => 'Nama produk wajib diisi.',
-            'name.max' => 'Nama produk maksimal 255 karakter.',
-            'name.unique' => 'Nama produk sudah ada.',
-            'price.required' => 'Harga wajib diisi.',
-            'price.numeric' => 'Harga harus berupa angka.',
-            'price.min' => 'Harga minimal 0.',
-            'promo_price.numeric' => 'Harga promo harus berupa angka.',
-            'promo_price.min' => 'Harga promo minimal 0.',
-            'promo_price.lt' => 'Harga promo harus lebih rendah dari harga normal.',
-            'stock.required' => 'Stok wajib diisi.',
-            'stock.integer' => 'Stok harus berupa angka.',
-            'stock.min' => 'Stok minimal 0.',
-            'image.image' => 'File harus berupa gambar.',
-            'image.mimes' => 'Format gambar harus jpeg, png, jpg, atau webp.',
-            'image.max' => 'Ukuran gambar maksimal 2MB.',
+            'variants.*.stok' => 'required|integer|min:0',
         ]);
 
         $data = [
-            'category_id' => $validated['category_id'],
-            'name' => $validated['name'],
-            'slug' => Str::slug($validated['name']),
-            'description' => $validated['description'] ?? null,
-            'price' => $validated['price'],
-            'stock' => $validated['stock'],
-            'is_promo' => $request->boolean('is_promo'),
+            'store_id' => $validated['store_id'],
+            'nama_produk' => $validated['nama_produk'],
+            'kategori' => $validated['kategori'],
+            'deskripsi' => $validated['deskripsi'] ?? null,
         ];
 
-        if ($request->filled('promo_price')) {
-            $data['promo_price'] = $validated['promo_price'];
-        } else {
-            $data['promo_price'] = null;
-        }
-
         if ($request->hasFile('image')) {
+            // Hapus gambar lama jika ada
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
@@ -144,17 +121,45 @@ class ProductController extends Controller
 
         $product->update($data);
 
+        // Sync variants: keep existing, update changed, delete removed
+        $existingIds = $product->productVariants()->pluck('id')->toArray();
+        $submittedIds = [];
+
+        foreach ($validated['variants'] as $variant) {
+            if (!empty($variant['id'])) {
+                // Update existing variant
+                ProductVariant::where('id', $variant['id'])->update([
+                    'nama_varian' => $variant['nama_varian'],
+                    'harga' => $variant['harga'],
+                    'stok' => $variant['stok'],
+                ]);
+                $submittedIds[] = $variant['id'];
+            } else {
+                // Create new variant
+                $new = ProductVariant::create([
+                    'product_id' => $product->id,
+                    'nama_varian' => $variant['nama_varian'],
+                    'harga' => $variant['harga'],
+                    'stok' => $variant['stok'],
+                ]);
+                $submittedIds[] = $new->id;
+            }
+        }
+
+        // Delete variants that were removed
+        $toDelete = array_diff($existingIds, $submittedIds);
+        if (!empty($toDelete)) {
+            ProductVariant::whereIn('id', $toDelete)->delete();
+        }
+
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
     public function destroy(Product $product): RedirectResponse
     {
-        if ($product->image) {
-            Storage::disk('public')->delete($product->image);
-        }
-
+        $product->productVariants()->delete();
         $product->delete();
 
-        return redirect()->route('admin.products.index')->with('success', 'Produk berhasil dihapus.');
+        return redirect()->route('admin.products.index')->with('success', 'Produk beserta varian berhasil dihapus.');
     }
 }

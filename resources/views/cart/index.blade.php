@@ -27,28 +27,33 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y">
-                    @foreach($cart as $item)
+                    @foreach($cart as $key => $item)
                         <tr>
                             <td class="px-4 py-4">
                                 <div class="flex items-center space-x-3">
-                                    <span class="font-medium">{{ $item['name'] }}</span>
+                                    <div>
+                                        <span class="font-medium">{{ $item['nama_produk'] }}</span>
+                                        <span class="text-sm text-stone-500 block">Varian: {{ $item['nama_varian'] }}</span>
+                                    </div>
                                 </div>
                             </td>
-                            <td class="px-4 py-4 text-center">Rp {{ number_format($item['price'], 0, ',', '.') }}</td>
+                            <td class="px-4 py-4 text-center">Rp {{ number_format($item['harga'], 0, ',', '.') }}</td>
                             <td class="px-4 py-4 text-center">
-                                <form action="{{ route('cart.update', $item['id']) }}" method="POST" class="inline-flex items-center space-x-2">
+                                <form action="{{ route('cart.update') }}" method="POST" class="inline-flex items-center space-x-2">
                                     @csrf
                                     @method('PATCH')
-                                    <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="{{ $item['stock'] }}"
+                                    <input type="hidden" name="variant_id" value="{{ $item['variant_id'] }}">
+                                    <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="{{ $item['stok'] }}"
                                         class="w-16 px-2 py-1 border rounded text-center focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none">
                                     <button type="submit" class="text-sm text-[#0D9488] hover:underline">Update</button>
                                 </form>
                             </td>
-                            <td class="px-4 py-4 text-center font-semibold">Rp {{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}</td>
+                            <td class="px-4 py-4 text-center font-semibold">Rp {{ number_format($item['harga'] * $item['quantity'], 0, ',', '.') }}</td>
                             <td class="px-4 py-4 text-center">
-                                <form action="{{ route('cart.remove', $item['id']) }}" method="POST">
+                                <form action="{{ route('cart.remove') }}" method="POST">
                                     @csrf
                                     @method('DELETE')
+                                    <input type="hidden" name="variant_id" value="{{ $item['variant_id'] }}">
                                     <button type="submit" class="text-red-500 hover:text-red-700 transition text-sm">Hapus</button>
                                 </form>
                             </td>
@@ -60,7 +65,7 @@
 
         <div class="mt-6 flex justify-between items-center">
             <div>
-                <span class="text-xl font-bold">Total: <span style="color: #0D9488;">Rp {{ number_format(collect($cart)->sum(fn($i) => $i['price'] * $i['quantity']), 0, ',', '.') }}</span></span>
+                <span class="text-xl font-bold">Total: <span style="color: #0D9488;">Rp {{ number_format(collect($cart)->sum(fn($i) => $i['harga'] * $i['quantity']), 0, ',', '.') }}</span></span>
             </div>
             <a href="{{ route('checkout.index') }}" class="bg-[#0D9488] text-white px-8 py-3 rounded-lg hover:bg-[#0f766e] transition font-semibold">
                 Checkout

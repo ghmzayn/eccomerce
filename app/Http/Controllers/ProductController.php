@@ -10,15 +10,25 @@ class ProductController extends Controller
 {
     public function byCategory(Category $category): View
     {
-        $products = $category->products()->latest()->paginate(12);
+        // Query by kategori string, not by category_id (which doesn't exist in new schema)
+        $products = Product::where('kategori', $category->name)
+            ->with('productVariants')
+            ->latest()
+            ->paginate(12);
 
         return view('products.index', compact('category', 'products'));
     }
 
     public function show(Product $product): View
     {
-        $relatedProducts = Product::where('category_id', $product->category_id)
+        $product->load(['productVariants' => function ($query) {
+            $query->orderBy('harga', 'asc');
+        }]);
+
+        // Cari produk terkait berdasarkan kategori string yang sama
+        $relatedProducts = Product::where('kategori', $product->kategori)
             ->where('id', '!=', $product->id)
+            ->with('productVariants')
             ->latest()
             ->take(4)
             ->get();

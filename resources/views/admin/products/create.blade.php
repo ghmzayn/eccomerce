@@ -3,100 +3,160 @@
 @section('title', 'Tambah Produk')
 
 @section('content')
-<div class="max-w-2xl">
-    <div class="bg-white rounded-xl shadow-sm border p-6">
-        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
+<div class="bg-white rounded-xl shadow-sm border p-6">
+    <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
 
-            <div class="mb-4">
-                <label for="category_id" class="block text-sm font-medium text-stone-700 mb-1">Kategori</label>
-                <select id="category_id" name="category_id" required
-                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none @error('category_id') border-red-500 @enderror">
-                    <option value="">Pilih Kategori</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <label for="store_id" class="block text-sm font-medium text-stone-700 mb-1">Toko</label>
+                <select id="store_id" name="store_id" required
+                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none @error('store_id') border-red-500 @enderror">
+                    <option value="">Pilih Toko</option>
+                    @foreach($stores as $store)
+                        <option value="{{ $store->id }}" {{ old('store_id') == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
                     @endforeach
                 </select>
-                @error('category_id')
+                @error('store_id')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
-
-            <div class="mb-4">
-                <label for="name" class="block text-sm font-medium text-stone-700 mb-1">Nama Produk</label>
-                <input type="text" id="name" name="name" value="{{ old('name') }}" required
-                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none @error('name') border-red-500 @enderror">
-                @error('name')
+            <div>
+                <label for="kategori" class="block text-sm font-medium text-stone-700 mb-1">Kategori</label>
+                <select id="kategori" name="kategori" required
+                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none @error('kategori') border-red-500 @enderror">
+                    <option value="">Pilih Kategori</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->name }}" {{ old('kategori') == $category->name ? 'selected' : '' }}>{{ $category->name }}</option>
+                    @endforeach
+                </select>
+                @error('kategori')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
+        </div>
 
-            <div class="mb-4">
-                <label for="description" class="block text-sm font-medium text-stone-700 mb-1">Deskripsi</label>
-                <textarea id="description" name="description" rows="4"
-                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none">{{ old('description') }}</textarea>
-                @error('description')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+        <div class="mb-4">
+            <label for="nama_produk" class="block text-sm font-medium text-stone-700 mb-1">Nama Produk</label>
+            <input type="text" id="nama_produk" name="nama_produk" value="{{ old('nama_produk') }}" required
+                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none @error('nama_produk') border-red-500 @enderror">
+            @error('nama_produk')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div class="mb-4">
-                    <label for="price" class="block text-sm font-medium text-stone-700 mb-1">Harga</label>
-                    <input type="number" id="price" name="price" value="{{ old('price') }}" required step="0.01"
-                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none @error('price') border-red-500 @enderror">
-                    @error('price')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+        <div class="mb-4">
+            <label for="deskripsi" class="block text-sm font-medium text-stone-700 mb-1">Deskripsi</label>
+            <textarea id="deskripsi" name="deskripsi" rows="4"
+                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none">{{ old('deskripsi') }}</textarea>
+            @error('deskripsi')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
 
-                <div class="mb-4">
-                    <label for="stock" class="block text-sm font-medium text-stone-700 mb-1">Stok</label>
-                    <input type="number" id="stock" name="stock" value="{{ old('stock', 0) }}" required
-                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none @error('stock') border-red-500 @enderror">
-                    @error('stock')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-            </div>
+        <div class="mb-6">
+            <label for="image" class="block text-sm font-medium text-stone-700 mb-1">Foto Produk (opsional)</label>
+            <input type="file" id="image" name="image" accept="image/*"
+                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none">
+            @error('image')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
 
-            <div class="mb-4">
-                <div class="flex items-center space-x-2">
-                    <input type="checkbox" id="is_promo" name="is_promo" value="1" {{ old('is_promo') ? 'checked' : '' }}
-                        class="rounded focus:ring-[#0D9488]">
-                    <label for="is_promo" class="text-sm font-medium text-stone-700">Aktifkan Promo</label>
-                </div>
-            </div>
+        <hr class="my-6">
 
-            <div class="mb-4" id="promo_price_container" style="{{ old('is_promo') ? '' : 'display:none' }}">
-                <label for="promo_price" class="block text-sm font-medium text-stone-700 mb-1">Harga Promo</label>
-                <input type="number" id="promo_price" name="promo_price" value="{{ old('promo_price') }}" step="0.01"
-                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none @error('promo_price') border-red-500 @enderror">
-                @error('promo_price')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="mb-6">
-                <label for="image" class="block text-sm font-medium text-stone-700 mb-1">Gambar Produk</label>
-                <input type="file" id="image" name="image" accept="image/*"
-                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none">
-                @error('image')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <button type="submit" class="bg-[#0D9488] text-white px-6 py-2 rounded-lg hover:bg-[#0f766e] transition">
-                Simpan
+        <div class="flex items-center justify-between mb-4">
+            <h4 class="font-semibold text-stone-700">Varian Produk</h4>
+            <button type="button" id="add-variant" class="bg-stone-100 text-stone-600 px-3 py-1.5 rounded-lg hover:bg-stone-200 transition text-sm font-medium">
+                + Tambah Varian
             </button>
-        </form>
-    </div>
+        </div>
+
+        @error('variants')
+            <p class="text-red-500 text-sm mb-4">{{ $message }}</p>
+        @enderror
+
+        <div id="variants-container">
+            <div class="variant-row bg-stone-50 rounded-lg p-4 mb-3 border">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-stone-600">Varian #1</span>
+                    <button type="button" class="remove-variant text-red-400 hover:text-red-600 transition text-sm" style="display:none">Hapus</button>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-stone-600 mb-1">Nama Varian</label>
+                        <input type="text" name="variants[0][nama_varian]" required placeholder="Mis: S, M, L"
+                            class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-stone-600 mb-1">Harga (Rp)</label>
+                        <input type="number" name="variants[0][harga]" required min="0" step="0.01"
+                            class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-stone-600 mb-1">Stok</label>
+                        <input type="number" name="variants[0][stok]" required min="0"
+                            class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <button type="submit" class="bg-[#0D9488] text-white px-6 py-2 rounded-lg hover:bg-[#0f766e] transition font-medium">
+                Simpan Produk
+            </button>
+        </div>
+    </form>
 </div>
 
 @push('scripts')
 <script>
-    document.getElementById('is_promo')?.addEventListener('change', function() {
-        document.getElementById('promo_price_container').style.display = this.checked ? 'block' : 'none';
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('variants-container');
+        const addBtn = document.getElementById('add-variant');
+        let variantIndex = 1;
+
+        addBtn.addEventListener('click', function() {
+            const row = document.createElement('div');
+            row.className = 'variant-row bg-stone-50 rounded-lg p-4 mb-3 border';
+            row.innerHTML = `
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-stone-600">Varian #${variantIndex + 1}</span>
+                    <button type="button" class="remove-variant text-red-500 hover:text-red-700 transition text-sm">Hapus</button>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-stone-600 mb-1">Nama Varian</label>
+                        <input type="text" name="variants[${variantIndex}][nama_varian]" required placeholder="Mis: S, M, L"
+                            class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-stone-600 mb-1">Harga (Rp)</label>
+                        <input type="number" name="variants[${variantIndex}][harga]" required min="0" step="0.01"
+                            class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-stone-600 mb-1">Stok</label>
+                        <input type="number" name="variants[${variantIndex}][stok]" required min="0"
+                            class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none">
+                    </div>
+                </div>
+            `;
+            container.appendChild(row);
+            variantIndex++;
+
+            row.querySelector('.remove-variant').addEventListener('click', function() {
+                row.remove();
+            });
+        });
+
+        // First row's remove button should be hidden if it's the only row
+        document.querySelectorAll('.remove-variant').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.variant-row').remove();
+            });
+        });
     });
 </script>
 @endpush

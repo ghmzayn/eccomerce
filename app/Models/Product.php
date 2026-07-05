@@ -2,41 +2,75 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
-    protected $fillable = [
-        'category_id', 'name', 'slug', 'description',
-        'price', 'promo_price', 'stock', 'image', 'is_promo',
-    ];
+    use HasFactory;
 
-    protected function casts(): array
+    protected $fillable = ['store_id', 'nama_produk', 'kategori', 'deskripsi', 'image'];
+
+    protected $appends = ['effective_price'];
+
+    /**
+     * Use route key name for URL resolution (products/{product:id})
+     * Laravel defaults to 'id' which works fine
+     */
+    public function getRouteKeyName(): string
     {
-        return [
-            'price' => 'decimal:2',
-            'promo_price' => 'decimal:2',
-            'is_promo' => 'boolean',
-        ];
+        return 'id';
     }
 
-    protected static function booted(): void
+    public function store(): BelongsTo
     {
-        static::creating(function (Product $product) {
-            if (empty($product->slug)) {
-                $product->slug = Str::slug($product->name);
-            }
-        });
+        return $this->belongsTo(Store::class);
     }
 
-    public function category()
+    public function productVariants(): HasMany
     {
-        return $this->belongsTo(Category::class);
+        return $this->hasMany(ProductVariant::class);
     }
 
-    public function getEffectivePriceAttribute()
+    /**
+     * Get the lowest variant price as effective price
+     */
+    public function getEffectivePriceAttribute(): float
     {
-        return $this->is_promo && $this->promo_price ? $this->promo_price : $this->price;
+        return (float) ($this->productVariants()->min('harga') ?? 0);
+    }
+
+    /**
+     * Get total stock across all variants
+     */
+    public function getTotalStockAttribute(): int
+    {
+        return (int) ($this->productVariants()->sum('stok') ?? 0);
+    }
+
+    /**
+     * Check if product has any variant in stock
+     */
+    public function getInStockAttribute(): bool
+    {
+        return $this->productVariants()->where('stok', '>', 0)->exists();
+    }
+
+    /**
+     * Get the category display name from the kategori field
+     */
+    public function kategori(): string
+    {
+        return $this->attributes['kategori'] ?? 'Umum';
+    }
+
+    /**
+     * Scope: products by same kategori (for related products)
+     */
+    public function scopeSameKategori($query, $kategori)
+    {
+        return $query->where('kategori', $kategori);
     }
 }

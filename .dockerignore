@@ -1,0 +1,54 @@
+# Dependencies
+vendor/
+node_modules/
+
+# Git
+.git/
+.gitattributes
+.gitignore
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build caches
+.storage/
+bootstrap/cache/*.php
+storage/framework/cache/data/*
+storage/framework/views/*.php
+storage/logs/*
+!storage/framework/.gitignore
+!storage/logs/.gitignore
+
+# Tests
+phpunit.xml
+.phpunit.cache
+phpunit.xml.dist
+tests/
+
+# Docker
+docker/
+Dockerfile
+.dockerignore
+
+# Railway
+nixpacks.toml
+Procfile
+railpack.json
+
+# Misc
+deploy.bat
+deploy.php
+extract
+upload
+*.log
+Thumbs.db

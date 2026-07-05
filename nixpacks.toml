@@ -1,0 +1,29 @@
+# nixpacks.toml — Railway deployment config for Qios (Laravel 13)
+# Dibutuhkan env vars: APP_KEY, APP_URL, DB_CONNECTION, DB_* dll (lihat catatan di bawah)
+
+[variables]
+NIXPACKS_PHP_VERSION = "8.3"
+NIXPACKS_PHP_EXTENSIONS = "bcmath,ctype,curl,dom,exif,fileinfo,gd,iconv,json,mbstring,openssl,pdo,pdo_mysql,pdo_sqlite,simplexml,tokenizer,xml,xmlwriter"
+NIXPACKS_PHP_COMPOSER_VERSION = "2"
+
+[phases.setup]
+aptGetPackages = ["git", "unzip", "curl"]
+
+[phases.install]
+cmds = [
+    "composer install --no-dev --optimize-autoloader",
+    "npm install --ignore-scripts",
+]
+
+[phases.build]
+cmds = [
+    "npm run build",
+    "php artisan storage:link",
+    "php artisan config:cache",
+    # route:cache di-skip karena ada closure route (/storage/{path})
+    # kalau mau pake route:cache, pindahkan closure itu ke controller dulu
+    "php artisan view:cache",
+]
+
+[start]
+cmd = "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"

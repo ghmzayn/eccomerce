@@ -11,7 +11,7 @@
             <div class="bg-white rounded-xl shadow-sm border p-6">
                 <h2 class="text-lg font-semibold mb-4">Detail Pengiriman</h2>
 
-                <form action="{{ route('checkout.process') }}" method="POST">
+                <form action="{{ route('checkout.process') }}" method="POST" id="checkout-form">
                     @csrf
 
                     <div class="mb-4">
@@ -21,6 +21,22 @@
                         @error('shipping_address')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-stone-700 mb-2">Kurir Pengiriman</label>
+                        @error('courier')
+                            <p class="text-red-500 text-sm mb-2">{{ $message }}</p>
+                        @enderror
+                        <div class="space-y-2">
+                            @foreach($couriers as $key => $opt)
+                                <label class="flex items-center space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-stone-50 courier-option" data-cost="{{ $opt['cost'] }}">
+                                    <input type="radio" name="courier" value="{{ $key }}" {{ old('courier') == $key ? 'checked' : '' }} class="courier-radio" required>
+                                    <span class="flex-1">{{ $opt['courier'] }} - {{ $opt['service'] }}</span>
+                                    <span class="font-semibold text-stone-700">Rp {{ number_format($opt['cost'], 0, ',', '.') }}</span>
+                                </label>
+                            @endforeach
+                        </div>
                     </div>
 
                     <div class="mb-4">
@@ -40,6 +56,10 @@
                             <label class="flex items-center space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-stone-50">
                                 <input type="radio" name="payment_method" value="transfer_bri" {{ old('payment_method') == 'transfer_bri' ? 'checked' : '' }}>
                                 <span>Transfer Bank BRI</span>
+                            </label>
+                            <label class="flex items-center space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-stone-50">
+                                <input type="radio" name="payment_method" value="qris" {{ old('payment_method') == 'qris' ? 'checked' : '' }}>
+                                <span>QRIS</span>
                             </label>
                             <label class="flex items-center space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-stone-50">
                                 <input type="radio" name="payment_method" value="cod" {{ old('payment_method') == 'cod' ? 'checked' : '' }}>
@@ -72,20 +92,46 @@
                 <div class="space-y-3 mb-4">
                     @foreach($cart as $item)
                         <div class="flex justify-between text-sm">
-                            <span>{{ $item['name'] }} x{{ $item['quantity'] }}</span>
-                            <span>Rp {{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}</span>
+                            <span>{{ $item['nama_produk'] }} ({{ $item['nama_varian'] }}) x{{ $item['quantity'] }}</span>
+                            <span>Rp {{ number_format($item['harga'] * $item['quantity'], 0, ',', '.') }}</span>
                         </div>
                     @endforeach
                 </div>
 
-                <div class="border-t pt-3">
-                    <div class="flex justify-between font-bold text-lg">
+                <div class="border-t pt-3 space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span>Subtotal</span>
+                        <span id="subtotal">Rp {{ number_format($total, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span>Ongkos Kirim</span>
+                        <span id="shipping-display">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-lg border-t pt-2">
                         <span>Total</span>
-                        <span style="color: #0D9488;">Rp {{ number_format($total, 0, ',', '.') }}</span>
+                        <span id="grand-total" style="color: #0D9488;">Rp {{ number_format($total, 0, ',', '.') }}</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    const subtotal = {{ $total }};
+    const courierRadios = document.querySelectorAll('.courier-radio');
+    const shippingDisplay = document.getElementById('shipping-display');
+    const grandTotal = document.getElementById('grand-total');
+
+    courierRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            const label = this.closest('.courier-option');
+            const cost = parseInt(label.dataset.cost);
+            shippingDisplay.textContent = 'Rp ' + cost.toLocaleString('id-ID');
+            grandTotal.textContent = 'Rp ' + (subtotal + cost).toLocaleString('id-ID');
+        });
+    });
+</script>
+@endpush
 @endsection

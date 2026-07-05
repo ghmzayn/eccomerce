@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BroadcastController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
@@ -27,9 +28,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 
 Route::middleware('auth')->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
-    Route::patch('/cart/update/{product}', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/cart/remove/{product}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::patch('/cart/update', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
@@ -37,6 +38,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{order}/payment-proof', [OrderController::class, 'uploadPaymentProof'])->name('orders.payment-proof');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -44,7 +46,7 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
 Route::get('/categories/{category:slug}', [ProductController::class, 'byCategory'])->name('categories.show');
-Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 
 Route::view('/cara-pembelian', 'pages.cara-pembelian')->name('pages.cara-pembelian');
 Route::view('/tentang-kami', 'pages.tentang-kami')->name('pages.tentang-kami');
@@ -69,6 +71,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::patch('/orders/{order}/shipping', [AdminOrderController::class, 'updateShipping'])->name('orders.update-shipping');
+    Route::patch('/orders/{order}/payment', [AdminOrderController::class, 'updatePayment'])->name('orders.update-payment');
+
+    Route::get('/broadcasts', [BroadcastController::class, 'index'])->name('broadcasts.index');
+    Route::get('/broadcasts/create', [BroadcastController::class, 'create'])->name('broadcasts.create');
+    Route::post('/broadcasts', [BroadcastController::class, 'store'])->name('broadcasts.store');
+    Route::get('/broadcasts/{broadcast}/edit', [BroadcastController::class, 'edit'])->name('broadcasts.edit');
+    Route::put('/broadcasts/{broadcast}', [BroadcastController::class, 'update'])->name('broadcasts.update');
+    Route::delete('/broadcasts/{broadcast}', [BroadcastController::class, 'destroy'])->name('broadcasts.destroy');
 });
 
 Route::get('/storage/{path}', function ($path) {

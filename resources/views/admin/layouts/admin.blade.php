@@ -29,6 +29,10 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                     <span>Pesanan</span>
                 </a>
+                <a href="{{ route('admin.broadcasts.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-stone-700 transition {{ request()->routeIs('admin.broadcasts.*') ? 'bg-stone-700' : '' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>
+                    <span>Siaran</span>
+                </a>
             </nav>
             <div class="absolute bottom-0 left-0 w-64 p-4">
                 <a href="{{ route('home') }}" class="flex items-center space-x-2 text-stone-200 hover:text-white transition">

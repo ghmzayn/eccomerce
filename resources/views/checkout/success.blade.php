@@ -20,12 +20,18 @@
         </div>
 
         <div class="text-left space-y-2 text-sm text-stone-600 mb-6">
-            <p><strong>Total:</strong> Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
+            <p><strong>Subtotal:</strong> Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
+            @if($order->shipping)
+                <p><strong>Ongkos Kirim:</strong> Rp {{ number_format($order->shipping->shipping_cost, 0, ',', '.') }}</p>
+                <p><strong>Kurir:</strong> {{ $order->shipping->courier }} - {{ $order->shipping->service }}</p>
+            @endif
+            <p><strong>Total Pembayaran:</strong> Rp {{ number_format($order->total_price + ($order->shipping->shipping_cost ?? 0), 0, ',', '.') }}</p>
             <p><strong>Metode Pembayaran:</strong>
                 @switch($order->payment_method)
                     @case('transfer_bca') Transfer BCA @break
                     @case('transfer_mandiri') Transfer Mandiri @break
                     @case('transfer_bri') Transfer BRI @break
+                    @case('qris') QRIS @break
                     @case('cod') COD (Bayar di Tempat) @break
                 @endswitch
             </p>

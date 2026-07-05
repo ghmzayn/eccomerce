@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -14,7 +15,14 @@ class CategoryController extends Controller
 {
     public function index(): View
     {
-        $categories = Category::withCount('products')->latest()->paginate(10);
+        $categories = Category::select('*')
+            ->selectSub(function ($query) {
+                $query->from('products')
+                    ->whereColumn('kategori', 'categories.name')
+                    ->selectRaw('count(*)');
+            }, 'products_count')
+            ->latest()
+            ->paginate(10);
 
         return view('admin.categories.index', compact('categories'));
     }
@@ -94,7 +102,7 @@ class CategoryController extends Controller
 
     public function destroy(Category $category): RedirectResponse
     {
-        if ($category->products()->count() > 0) {
+        if (Product::where('kategori', $category->name)->count() > 0) {
             return back()->with('error', 'Kategori tidak bisa dihapus karena masih memiliki produk.');
         }
 
