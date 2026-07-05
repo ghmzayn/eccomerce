@@ -9,24 +9,28 @@ ARG NODE_VERSION=22
 
 # --- System dependencies ---
 RUN apk add --no-cache \
-    bash \
-    curl \
+    # PHP extension deps
     curl-dev \
     freetype-dev \
-    git \
     icu-dev \
     libjpeg-turbo-dev \
     libpng-dev \
     libwebp-dev \
     libxml2-dev \
     libzip-dev \
+    mariadb-dev \
+    oniguruma-dev \
+    sqlite-dev \
+    zlib-dev \
+    # Tools & runtime
+    bash \
+    curl \
+    git \
     linux-headers \
+    nginx \
     nodejs \
     npm \
-    oniguruma-dev \
-    unzip \
-    # nginx untuk production stage
-    nginx
+    unzip
 
 # --- PHP extensions ---
 RUN docker-php-ext-configure gd \
