@@ -2,7 +2,7 @@
 # Dibutuhkan env vars: APP_KEY, APP_URL, DB_CONNECTION, DB_* dll (lihat catatan di bawah)
 
 [variables]
-NIXPACKS_PHP_VERSION = "8.3"
+NIXPACKS_PHP_VERSION = "8.2"
 NIXPACKS_PHP_EXTENSIONS = "bcmath,ctype,curl,dom,exif,fileinfo,gd,iconv,json,mbstring,openssl,pdo,pdo_mysql,pdo_sqlite,simplexml,tokenizer,xml,xmlwriter"
 NIXPACKS_PHP_COMPOSER_VERSION = "2"
 
