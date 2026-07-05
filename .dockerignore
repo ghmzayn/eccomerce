@@ -35,10 +35,10 @@ phpunit.xml
 phpunit.xml.dist
 tests/
 
-# Docker
-docker/
-Dockerfile
-.dockerignore
+# Docker config files (jangan exclude docker/ — berisi nginx.conf & entrypoint.sh)
+# docker/
+# Dockerfile
+# .dockerignore
 
 # Railway
 nixpacks.toml
