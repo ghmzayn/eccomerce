@@ -9,8 +9,12 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
             fonts: [
-                bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
+                bunny('Playfair Display', {
+                    weights: [400, 500],
+                    styles: ['normal', 'italic'],
+                }),
+                bunny('Hanken Grotesk', {
+                    weights: [300, 400, 500, 600],
                 }),
             ],
         }),

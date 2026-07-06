@@ -11,7 +11,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['store_id', 'nama_produk', 'kategori', 'deskripsi', 'image'];
+    protected $fillable = ['store_id', 'category_id', 'nama_produk', 'deskripsi', 'image'];
 
     protected $appends = ['effective_price'];
 
@@ -27,6 +27,11 @@ class Product extends Model
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 
     public function productVariants(): HasMany
@@ -59,18 +64,10 @@ class Product extends Model
     }
 
     /**
-     * Get the category display name from the kategori field
+     * Scope: products by same category (for related products)
      */
-    public function kategori(): string
+    public function scopeSameCategory($query, $categoryId)
     {
-        return $this->attributes['kategori'] ?? 'Umum';
-    }
-
-    /**
-     * Scope: products by same kategori (for related products)
-     */
-    public function scopeSameKategori($query, $kategori)
-    {
-        return $query->where('kategori', $kategori);
+        return $query->where('category_id', $categoryId);
     }
 }

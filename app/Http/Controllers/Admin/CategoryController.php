@@ -18,7 +18,7 @@ class CategoryController extends Controller
         $categories = Category::select('*')
             ->selectSub(function ($query) {
                 $query->from('products')
-                    ->whereColumn('kategori', 'categories.name')
+                    ->whereColumn('category_id', 'categories.id')
                     ->selectRaw('count(*)');
             }, 'products_count')
             ->latest()
@@ -102,7 +102,7 @@ class CategoryController extends Controller
 
     public function destroy(Category $category): RedirectResponse
     {
-        if (Product::where('kategori', $category->name)->count() > 0) {
+        if (Product::where('category_id', $category->id)->count() > 0) {
             return back()->with('error', 'Kategori tidak bisa dihapus karena masih memiliki produk.');
         }
 

@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\Admin\BroadcastController;
+use App\Http\Controllers\Admin\BroadcastController as AdminBroadcastController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BroadcastController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
@@ -47,6 +48,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
 Route::get('/categories/{category:slug}', [ProductController::class, 'byCategory'])->name('categories.show');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/broadcasts', [BroadcastController::class, 'index'])->name('broadcasts.index');
 
 Route::view('/cara-pembelian', 'pages.cara-pembelian')->name('pages.cara-pembelian');
 Route::view('/tentang-kami', 'pages.tentang-kami')->name('pages.tentang-kami');
@@ -74,12 +76,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::patch('/orders/{order}/shipping', [AdminOrderController::class, 'updateShipping'])->name('orders.update-shipping');
     Route::patch('/orders/{order}/payment', [AdminOrderController::class, 'updatePayment'])->name('orders.update-payment');
 
-    Route::get('/broadcasts', [BroadcastController::class, 'index'])->name('broadcasts.index');
-    Route::get('/broadcasts/create', [BroadcastController::class, 'create'])->name('broadcasts.create');
-    Route::post('/broadcasts', [BroadcastController::class, 'store'])->name('broadcasts.store');
-    Route::get('/broadcasts/{broadcast}/edit', [BroadcastController::class, 'edit'])->name('broadcasts.edit');
-    Route::put('/broadcasts/{broadcast}', [BroadcastController::class, 'update'])->name('broadcasts.update');
-    Route::delete('/broadcasts/{broadcast}', [BroadcastController::class, 'destroy'])->name('broadcasts.destroy');
+    Route::get('/broadcasts', [AdminBroadcastController::class, 'index'])->name('broadcasts.index');
+    Route::get('/broadcasts/create', [AdminBroadcastController::class, 'create'])->name('broadcasts.create');
+    Route::post('/broadcasts', [AdminBroadcastController::class, 'store'])->name('broadcasts.store');
+    Route::get('/broadcasts/{broadcast}/edit', [AdminBroadcastController::class, 'edit'])->name('broadcasts.edit');
+    Route::put('/broadcasts/{broadcast}', [AdminBroadcastController::class, 'update'])->name('broadcasts.update');
+    Route::delete('/broadcasts/{broadcast}', [AdminBroadcastController::class, 'destroy'])->name('broadcasts.destroy');
 });
 
 Route::get('/storage/{path}', function ($path) {

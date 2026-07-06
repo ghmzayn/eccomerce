@@ -13,8 +13,8 @@ class HomeController extends Controller
     {
         $categories = Category::all();
         $activeBroadcasts = Broadcast::with('store', 'product')->where('is_live', true)->latest()->get();
-        $featuredProducts = Product::with('productVariants')->latest()->take(6)->get();
-        $latestProducts = Product::with('productVariants')->latest()->take(8)->get();
+        $featuredProducts = Product::with('category', 'productVariants')->latest()->take(6)->get();
+        $latestProducts = Product::with('category', 'productVariants')->latest()->take(8)->get();
 
         return view('home.index', compact('categories', 'activeBroadcasts', 'featuredProducts', 'latestProducts'));
     }

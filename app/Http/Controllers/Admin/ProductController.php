@@ -16,7 +16,7 @@ class ProductController extends Controller
 {
     public function index(): View
     {
-        $products = Product::with(['store', 'productVariants'])->withCount('productVariants')->latest()->paginate(10);
+        $products = Product::with(['store', 'category', 'productVariants'])->withCount('productVariants')->latest()->paginate(10);
 
         return view('admin.products.index', compact('products'));
     }
@@ -34,7 +34,7 @@ class ProductController extends Controller
         $validated = $request->validate([
             'store_id' => 'required|exists:stores,id',
             'nama_produk' => 'required|max:255',
-            'kategori' => 'required|max:100',
+            'category_id' => 'required|exists:categories,id',
             'deskripsi' => 'nullable',
             'variants' => 'required|array|min:1',
             'variants.*.nama_varian' => 'required|max:100',
@@ -46,7 +46,8 @@ class ProductController extends Controller
             'store_id.exists' => 'Toko tidak valid.',
             'nama_produk.required' => 'Nama produk wajib diisi.',
             'nama_produk.max' => 'Nama produk maksimal 255 karakter.',
-            'kategori.required' => 'Kategori wajib diisi.',
+            'category_id.required' => 'Kategori wajib dipilih.',
+            'category_id.exists' => 'Kategori tidak valid.',
             'variants.required' => 'Minimal 1 varian produk.',
             'variants.*.nama_varian.required' => 'Nama varian wajib diisi.',
             'variants.*.harga.required' => 'Harga varian wajib diisi.',
@@ -58,7 +59,7 @@ class ProductController extends Controller
         $data = [
             'store_id' => $validated['store_id'],
             'nama_produk' => $validated['nama_produk'],
-            'kategori' => $validated['kategori'],
+            'category_id' => $validated['category_id'],
             'deskripsi' => $validated['deskripsi'] ?? null,
         ];
 
@@ -94,7 +95,7 @@ class ProductController extends Controller
         $validated = $request->validate([
             'store_id' => 'required|exists:stores,id',
             'nama_produk' => 'required|max:255',
-            'kategori' => 'required|max:100',
+            'category_id' => 'required|exists:categories,id',
             'deskripsi' => 'nullable',
             'variants' => 'required|array|min:1',
             'variants.*.id' => 'nullable|exists:product_variants,id',
@@ -107,7 +108,7 @@ class ProductController extends Controller
         $data = [
             'store_id' => $validated['store_id'],
             'nama_produk' => $validated['nama_produk'],
-            'kategori' => $validated['kategori'],
+            'category_id' => $validated['category_id'],
             'deskripsi' => $validated['deskripsi'] ?? null,
         ];
 

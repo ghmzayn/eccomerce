@@ -24,7 +24,7 @@
             @forelse($products as $product)
                 <tr>
                     <td class="px-4 py-3 font-medium">{{ $product->nama_produk }}</td>
-                    <td class="px-4 py-3">{{ $product->kategori }}</td>
+                    <td class="px-4 py-3">{{ $product->category->name }}</td>
                     <td class="px-4 py-3">{{ $product->store->name }}</td>
                     <td class="px-4 py-3 text-center">{{ $product->product_variants_count }} varian</td>
                     <td class="px-4 py-3 text-right">Rp {{ number_format($product->effective_price, 0, ',', '.') }}</td>

@@ -16,8 +16,8 @@ class CategoriesSeeder extends Seeder
         ]);
 
         Category::create([
-            'name' => 'Elektronik/Handphone',
-            'slug' => 'elektronik-handphone',
+            'name' => 'Elektronik',
+            'slug' => 'elektronik',
             'description' => 'Smartphone, laptop, tablet, aksesoris gadget, dan perangkat elektronik lainnya',
         ]);
     }

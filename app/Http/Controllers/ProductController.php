@@ -10,9 +10,7 @@ class ProductController extends Controller
 {
     public function byCategory(Category $category): View
     {
-        // Query by kategori string, not by category_id (which doesn't exist in new schema)
-        $products = Product::where('kategori', $category->name)
-            ->with('productVariants')
+        $products = Product::with('category', 'productVariants')->where('category_id', $category->id)
             ->latest()
             ->paginate(12);
 
@@ -25,10 +23,10 @@ class ProductController extends Controller
             $query->orderBy('harga', 'asc');
         }]);
 
-        // Cari produk terkait berdasarkan kategori string yang sama
-        $relatedProducts = Product::where('kategori', $product->kategori)
+        // Cari produk terkait berdasarkan kategori yang sama
+        $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
-            ->with('productVariants')
+            ->with('category', 'productVariants')
             ->latest()
             ->take(4)
             ->get();

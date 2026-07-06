@@ -22,15 +22,15 @@
                 @enderror
             </div>
             <div>
-                <label for="kategori" class="block text-sm font-medium text-stone-700 mb-1">Kategori</label>
-                <select id="kategori" name="kategori" required
-                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none @error('kategori') border-red-500 @enderror">
+                <label for="category_id" class="block text-sm font-medium text-stone-700 mb-1">Kategori</label>
+                <select id="category_id" name="category_id" required
+                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] outline-none @error('category_id') border-red-500 @enderror">
                     <option value="">Pilih Kategori</option>
                     @foreach($categories as $category)
-                        <option value="{{ $category->name }}" {{ old('kategori') == $category->name ? 'selected' : '' }}>{{ $category->name }}</option>
+                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                     @endforeach
                 </select>
-                @error('kategori')
+                @error('category_id')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
